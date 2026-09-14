@@ -1,0 +1,34 @@
+{
+  "functions": [
+    {
+      "id": "ASK",
+      "name": "ASK",
+      "description": "Ask Claude any question or instruction and get the answer back in the cell.",
+      "helpUrl": "https://www.anthropic.com",
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      },
+      "parameters": [
+        {
+          "name": "question",
+          "description": "Your question or instruction, e.g. \"summarize this in 5 words\".",
+          "type": "string",
+          "dimensionality": "scalar"
+        },
+        {
+          "name": "context",
+          "description": "Optional: a cell or range to use as data/context for the question.",
+          "type": "any",
+          "dimensionality": "matrix",
+          "optional": true
+        }
+      ],
+      "options": {
+        "requiresAddress": false,
+        "stream": false,
+        "cancelable": true
+      }
+    }
+  ]
+}

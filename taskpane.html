@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ask Claude</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --text: #242424;
+      --subtext: #616161;
+      --border: #e1e1e1;
+      --field-bg: #f5f5f5;
+      --accent: #da7756;
+      --accent-text: #ffffff;
+      --error: #b3261e;
+      --ok: #146c2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #201f1e;
+        --text: #f3f2f1;
+        --subtext: #c8c6c4;
+        --border: #3b3a39;
+        --field-bg: #2d2c2b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+    }
+    h1 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 2px 0;
+    }
+    p.subtitle {
+      margin: 0 0 18px 0;
+      color: var(--subtext);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    section {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    input[type="password"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--field-bg);
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .hint {
+      font-size: 11px;
+      color: var(--subtext);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+    .hint a { color: var(--accent); }
+    button {
+      background: var(--accent);
+      color: var(--accent-text);
+      border: none;
+      border-radius: 4px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .status {
+      margin-top: 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    .status.ok { color: var(--ok); }
+    .status.error { color: var(--error); }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+    code {
+      background: var(--field-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 12px;
+    }
+    .answer-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--field-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ask Claude</h1>
+  <p class="subtitle">Set up once, then use <code>=CLAUDE.ASK("question")</code> in any cell.</p>
+
+  <section>
+    <label for="apiKey">Anthropic API key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="hint">
+      Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>.
+      Stored inside this workbook only &mdash; it is not sent anywhere except directly to Anthropic's API.
+    </div>
+  </section>
+
+  <section>
+    <label for="model">Model</label>
+    <select id="model">
+      <option value="claude-sonnet-5">Claude Sonnet 5 (recommended, balanced)</option>
+      <option value="claude-opus-5">Claude Opus 5 (most capable, slower)</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest, cheapest)</option>
+    </select>
+    <div class="hint">Applies to every <code>=CLAUDE.ASK(...)</code> cell in this workbook.</div>
+  </section>
+
+  <div class="row">
+    <button id="saveBtn">Save</button>
+  </div>
+  <div id="saveStatus" class="status"></div>
+
+  <hr />
+
+  <section>
+    <label for="quickQuestion">Try it here</label>
+    <textarea id="quickQuestion" placeholder="Ask anything..."></textarea>
+    <div class="row">
+      <button id="askBtn" class="secondary">Ask</button>
+    </div>
+    <div id="answerBox" class="answer-box"></div>
+    <div id="askStatus" class="status"></div>
+  </section>
+</body>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+<script src="taskpane.js" type="text/javascript"></script>
+</html>
